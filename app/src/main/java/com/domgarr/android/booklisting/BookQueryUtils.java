@@ -24,10 +24,10 @@ public final class BookQueryUtils {
     //This object is not meant to hold state.
     private BookQueryUtils(){}
 
-    public static ArrayList<Book> getBooks(String queryStringUrl){
+    public static ArrayList<Book> getBooks(String queryUrlString){
         ArrayList<Book> books = new ArrayList<>();
 
-        URL url = createUrl(queryStringUrl);
+        URL url = createUrl(queryUrlString);
         if(url == null){
             return null;
         }
@@ -41,7 +41,7 @@ public final class BookQueryUtils {
             String author;
             String publishedDate;
             String description;
-            Double averageRating;
+            double averageRating;
             String imageLink;
             String previewLink;
 

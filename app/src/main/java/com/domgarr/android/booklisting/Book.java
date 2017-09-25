@@ -10,7 +10,7 @@ public class Book {
     private final String mPublishedDate;
     private final String mDescription;
     private final String mImageLink;
-    private final Double mAverageRating;
+    private final double mAverageRating;
     private final String mPreviewLink;
 
     //This class implements a builder pattern. It is useful when the constructor
@@ -86,7 +86,7 @@ public class Book {
         return mImageLink;
     }
 
-    public Double getAverageRating() {
+    public double getAverageRating() {
         return mAverageRating;
     }
 
