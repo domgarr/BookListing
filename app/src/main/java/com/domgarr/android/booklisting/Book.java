@@ -24,6 +24,13 @@ public class Book {
         private String mImageLink;
         private String mDescription;
 
+        public BookBuilder(String title, String author, String description, String imageLink) {
+            mTitle = title;
+            mAuthor = author;
+            mImageLink = imageLink;
+            mDescription = description;
+        }
+
         //Optional Parameters - Initialized to default values
         private  String mPublishedDate = null;
         private  Double mAverageRating = null;
@@ -34,12 +41,12 @@ public class Book {
             return this;
         }
 
-        public BookBuilder mAverageRating(Double AverageRating){
-            mAverageRating = mAverageRating;
+        public BookBuilder averageRating(Double averageRating){
+            mAverageRating = averageRating;
             return this;
         }
 
-        public BookBuilder mPreviewLink(String previewLink){
+        public BookBuilder previewLink(String previewLink){
             mPreviewLink = previewLink;
             return this;
         }
