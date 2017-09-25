@@ -1,10 +1,17 @@
 package com.domgarr.android.booklisting;
 
+import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.regex.Pattern;
+
 /**
  * Created by Domenic on 2017-09-24.
  */
 
 public class Book {
+    private final String LOG_TAG = "Book";
+
     private final String mTitle;
     private final String mAuthor;
     private final String mPublishedDate;
@@ -56,6 +63,8 @@ public class Book {
         }
     }
 
+    private final String regexPattern = "\\\",\\\"";
+
     private Book (BookBuilder bookBuilder){
         mTitle = bookBuilder.mTitle;
         mAuthor = bookBuilder.mAuthor;
@@ -71,15 +80,49 @@ public class Book {
     }
 
     public String getAuthor() {
-        return mAuthor;
+
+        if(mAuthor == null)
+            return "";
+
+        String tempAuthors = mAuthor.replace('[', ' ').replace(']', ' ');
+        Log.d(LOG_TAG, "tempAuthors without [ or ] : " + tempAuthors);
+        String[] authors = tempAuthors.split(regexPattern);
+        for(int i = 0; i < authors.length ; i++){
+            Log.d(LOG_TAG, "Array[i] : " + authors[i]);
+        }
+
+
+        if(authors.length > 1)
+        return authors[0].replaceAll('"' + "", "") + " et al.";
+        else
+            return authors[0].replaceAll('"' + "", "");
+
     }
 
     public String getPublishedDate() {
-        return mPublishedDate;
+        return mPublishedDate.substring(0, 4);
     }
 
     public String getDescription() {
-        return mDescription;
+        StringBuilder sb = new StringBuilder();
+
+        if(mDescription == null)
+            return "";
+
+        if(mDescription.length() > 100){
+
+            String[] tokens = mDescription.split(" ");
+
+            for(int i = 0; i < tokens.length; i++){
+                if(sb.length() > 100)
+                    break;
+
+                sb.append(tokens[i] + " ");
+            }
+            sb.append("...");
+        }
+
+        return sb.toString();
     }
 
     public String getImageLink() {
