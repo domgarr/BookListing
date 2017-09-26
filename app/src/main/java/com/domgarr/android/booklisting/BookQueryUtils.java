@@ -23,15 +23,20 @@ import java.util.ArrayList;
 
 public final class BookQueryUtils {
     private static final String LOG_TAG = "BookQueryUtils";
+
+    public static final String GOOGLE_BOOK_QUERY = "https://www.googleapis.com/books/v1/volumes?q=";
+
     //This object is not meant to hold state.
     private BookQueryUtils(){}
 
-    public static ArrayList<Book> getBooks(String queryUrlString){
+    public static ArrayList<Book> getBooks(String queryString){
         ArrayList<Book> books = new ArrayList<>();
 
+        if(queryString == null){
+            return null;
+        }
 
-
-        URL url = createUrl(queryUrlString);
+        URL url = createUrl(GOOGLE_BOOK_QUERY + queryString);
         if(url == null){
             return null;
         }

@@ -1,20 +1,21 @@
 package com.domgarr.android.booklisting;
 
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-public static final String LOG_TAG = "MainActivity";
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Book>> {
+    public static final String LOG_TAG = "MainActivity";
 
-    public static final String GOOGLE_BOOK_QUERY = "https://www.googleapis.com/books/v1/volumes?q=";
+    public static final int LOADER_ID = 1;
 
     private ListView mListView;
     private SearchView mSearchView;
@@ -22,26 +23,20 @@ public static final String LOG_TAG = "MainActivity";
     private BookAdapter mBookAdapter;
     private List<Book> books;
 
-
-
+    private String mQuery;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSearchView = (SearchView) findViewById(R.id.search_view);
-
-
-
 
         books = new ArrayList<>();
-        mListView = (ListView) findViewById(R.id.list_view);
 
-        mBookAdapter = new BookAdapter(getApplicationContext(), 0, (ArrayList) books);
-        mListView.setAdapter(mBookAdapter);
+        initViews();
+        initAdapter();
 
-
+        getLoaderManager().initLoader(LOADER_ID, null, MainActivity.this);
 
 
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -50,8 +45,9 @@ public static final String LOG_TAG = "MainActivity";
                 if(query == null || query.isEmpty() )
                     return false;
 
-                DownloadBooksTask downloadBooksTask = new DownloadBooksTask();
-                downloadBooksTask.execute(query);
+                mQuery = query;
+                //Loaders cache query results!
+                getLoaderManager().restartLoader(LOADER_ID, null, MainActivity.this);
 
                 return true;
             }
@@ -64,19 +60,35 @@ public static final String LOG_TAG = "MainActivity";
 
     }
 
+    @Override
+    public Loader<List<Book>> onCreateLoader(int id, Bundle args) {
+        return new BookLoader(this, mQuery);
+    }
 
-    private class DownloadBooksTask extends AsyncTask<String, Void, List<Book>> {
+    @Override
+    public void onLoadFinished(Loader<List<Book>> loader, List<Book> result) {
+        books = result;
+        mBookAdapter.clear();
 
-        @Override
-        protected List<Book> doInBackground(String... params) {
-            return BookQueryUtils.getBooks(GOOGLE_BOOK_QUERY + params[0]);
-        }
-
-        protected void onPostExecute(List<Book> result) {
-            books = result;
-            mBookAdapter.clear();
+        if(books != null && !books.isEmpty()) {
             mBookAdapter.addAll(books);
-            mBookAdapter.notifyDataSetChanged();
         }
+        //mBookAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Book>> loader) {
+        mBookAdapter.clear();
+        books.clear();
+    }
+
+    private void initViews(){
+        mSearchView = (SearchView) findViewById(R.id.search_view);
+        mListView = (ListView) findViewById(R.id.list_view);
+    }
+
+    private void initAdapter(){
+        mBookAdapter = new BookAdapter(getApplicationContext(), 0, (ArrayList) books);
+        mListView.setAdapter(mBookAdapter);
     }
 }
