@@ -85,18 +85,13 @@ public class Book {
             return "";
 
         String tempAuthors = mAuthor.replace('[', ' ').replace(']', ' ');
-        Log.d(LOG_TAG, "tempAuthors without [ or ] : " + tempAuthors);
         String[] authors = tempAuthors.split(regexPattern);
-        for(int i = 0; i < authors.length ; i++){
-            Log.d(LOG_TAG, "Array[i] : " + authors[i]);
-        }
 
-
-        if(authors.length > 1)
-        return authors[0].replaceAll('"' + "", "") + " et al.";
-        else
+        if(authors.length > 1) {
+            return authors[0].replaceAll('"' + "", "") + " et al.";
+        }else {
             return authors[0].replaceAll('"' + "", "");
-
+        }
     }
 
     public String getPublishedDate() {

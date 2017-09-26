@@ -10,9 +10,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 /**
@@ -27,6 +29,8 @@ public final class BookQueryUtils {
     public static ArrayList<Book> getBooks(String queryUrlString){
         ArrayList<Book> books = new ArrayList<>();
 
+
+
         URL url = createUrl(queryUrlString);
         if(url == null){
             return null;
@@ -37,13 +41,13 @@ public final class BookQueryUtils {
 
             JSONArray itemsArray = booksRoot.optJSONArray("items");
 
-            String title;
-            String author;
-            String publishedDate;
-            String description;
-            double averageRating;
-            String imageLink;
-            String previewLink;
+            String title = null;
+            String author = null;
+            String publishedDate = null;
+            String description = null;
+            double averageRating = 0.0;
+            String imageLink = null;
+            String previewLink = null;
 
             for(int i = 0; i < itemsArray.length(); i++){
                 JSONObject itemObject = (JSONObject) itemsArray.get(i);
@@ -51,7 +55,12 @@ public final class BookQueryUtils {
 
 
                 title = volumeInfo.getString("title");
-                author = volumeInfo.getJSONArray("authors").toString();
+
+                JSONArray authorsArray = volumeInfo.optJSONArray("authors");
+                if(authorsArray != null){
+                    author = authorsArray.toString();
+                }
+
                 publishedDate = volumeInfo.getString("publishedDate");
                 description = volumeInfo.optString("description");
                 averageRating =  volumeInfo.optDouble("averageRating", 0) ;
@@ -73,16 +82,21 @@ public final class BookQueryUtils {
     }
 
     private static URL createUrl(String urlString){
+
+
         URL url = null;
         if(urlString == null || urlString.isEmpty()){
             return null;
         }
 
         try{
+            //https://stackoverflow.com/questions/28482801/how-to-request-json-that-have-spaces-in-url
+            urlString = urlString.replaceAll(" ", "%20");
             url = new URL(urlString);
         }catch (MalformedURLException e){
             e.printStackTrace();
         }
+
 
         return url;
     }
