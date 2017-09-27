@@ -30,6 +30,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if(savedInstanceState.get("query") != null){
+            mQuery = (String) savedInstanceState.get("query");
+        }
+
+
 
         books = new ArrayList<>();
 
@@ -45,7 +50,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 if(query == null || query.isEmpty() )
                     return false;
 
+                mSearchView.setIconified(true);
+                mSearchView.onActionViewCollapsed();
+
                 mQuery = query;
+                savedInstanceState.putString("query", mQuery);
+
                 //Loaders cache query results!
                 getLoaderManager().restartLoader(LOADER_ID, null, MainActivity.this);
 
@@ -84,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void initViews(){
         mSearchView = (SearchView) findViewById(R.id.search_view);
+        mSearchView.onActionViewCollapsed();
+        mSearchView.setQuery(mQuery, false);
+
         mListView = (ListView) findViewById(R.id.list_view);
     }
 
@@ -91,4 +104,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mBookAdapter = new BookAdapter(getApplicationContext(), 0, (ArrayList) books);
         mListView.setAdapter(mBookAdapter);
     }
+
+
 }

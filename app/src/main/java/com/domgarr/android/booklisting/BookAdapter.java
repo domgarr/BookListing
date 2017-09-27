@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,8 +64,9 @@ public class BookAdapter extends ArrayAdapter<Book> {
         descriptionTextView.setTypeface(robotoLightTypeface);
 
         RatingBar averageRatingBar = (RatingBar) listItemView.findViewById(R.id.average_rating);
-        averageRatingBar.setRating( (float) book.getAverageRating());
 
+        averageRatingBar.setRating( (float) book.getAverageRating());
+        Log.d("BookAdapter" , position + " Average Rating: " + averageRatingBar.getRating());
         ImageView bookImageView = (ImageView) listItemView.findViewById(R.id.book_image_view);
         Picasso.with( getContext() ).load( book.getImageLink() ).fit().into( bookImageView );
 
